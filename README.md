@@ -1,6 +1,16 @@
 # hyukjun's tech blog
 ## URL
 [hyukjuns.github.io](https://hyukjuns.github.io)
+
+## 좋은 블로그란?
+https://www.44bits.io/ko/post/8-suggestions-for-tech-programming-blog
+
+## jekyll 블로그 CMS
+[localhost:4000/admin](localhost:4000/admin)
+- how to install
+  
+  https://github.com/jekyll/jekyll-admin
+
 ## Post
 - post 제목 양식
 ```
@@ -68,3 +78,5 @@ Warning	.notice--warning
 Success	.notice--success
 Danger	.notice--danger
 ```
+## 홈 화면 편집
+https://mmistakes.github.io/minimal-mistakes/docs/layouts/#home-page-layout
