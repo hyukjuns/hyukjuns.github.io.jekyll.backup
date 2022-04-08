@@ -1,8 +1,7 @@
-# hyukjuns tech blog
+# hyukjun's tech blog
 ## URL
 [hyukjuns.github.io](https://hyukjuns.github.io)
-
-# Post
+## Post
 - post 제목 양식
 ```
 YEAR-MONTH-DAY-title.md
@@ -22,8 +21,7 @@ toc_label: "Contents"
 last_modified_at: date
 ---
 ```
-
-## In local
+## 로컬 환경 세팅
 1. 포스트 작성
 2. 로컬 빌드
     ```
@@ -38,7 +36,8 @@ last_modified_at: date
 3. git push
 4. github page 빌드 후 홈페이지 확인
 
-# 본문 화면 폭 넓히기
+
+## 본문 화면 폭 넓히기
 개발자 모드로 해당 화면의 class 알아낸 후 padding 값 수정 함
 (해당 본문 구역(article)의 margin을 줄이지 않고, 오른쪽 padding을 0으로 하여 오른쪽 여백을 없앰)
 
@@ -58,8 +57,7 @@ last_modified_at: date
     padding-right: 0%;
   }
 ```
-
-### Markdown
+## Markdown
 ```
 문자 박스Permalink
 Notice Type	Class
