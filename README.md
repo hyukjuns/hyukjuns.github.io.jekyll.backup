@@ -4,7 +4,11 @@
 
 ## 좋은 블로그란?
 https://www.44bits.io/ko/post/8-suggestions-for-tech-programming-blog
-
+- 글의 형식
+  - tutorial (학습, 예제 중점)
+  - how-to-guide (문제해결 중점)
+  - explanation (이해,해설 중점)
+  - reference (정보전달 중점)
 ## jekyll 블로그 CMS
 [localhost:4000/admin](localhost:4000/admin)
 - how to install
