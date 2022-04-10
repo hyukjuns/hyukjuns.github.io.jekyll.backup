@@ -23,6 +23,7 @@ Vagrant를 사용해 Kubernetes의 노드를 생성하고, kubeadm을 사용해 
 
 ## Goal
 Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
+
 ## Environment
 1. Host Spec
     - MacBook Pro (Retina 13-inch, Early 2015)
@@ -47,12 +48,16 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
         - centos 7.9.2009 (core) (generic/centos 7) 
         - Kernel: Linux 3.10.0-1160.59.1.el7.x86_64
         - 2 CPU, 2048 Mem, 30GB Storage
+
 ## Prerequire Tools
 - vscode (+k8s plugin
 - kubectl (v1.23.5)
 - vagrant (v2.2.19), virtualbox (v6.1.32)
+
 ## Steps
+
 ### 1. 클러스터 노드 생성
+
 1. Vagrantfile
 
     > master, worker 각 1대씩 bridge Network 모드로 생성합니다.
@@ -88,6 +93,7 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
 ### 2. 클러스터 설치
 
 >**[All Node (Master, Worker)]**
+
 1. hostname 변경
 
     각 노드는 hostname이 고유해야 합니다. 저는 worker 노드의 hostname만 변경 하였습니다.
@@ -233,6 +239,7 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
             failure: repodata/repomd.xml from kubernetes: [Errno 256] No more mirrors to try.
             https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for kubernetes
             ```
+    
     2. 패키지 설치 및 kubelet 활성
         > kubelet 활성 이후 "systemctl status kubelet으로 화인시 status가 failure인 이유는 아직 kubeadm으로 클러스터를 bootstrap 하기 전 이므로 kubelet의 status는 비정상으로 확인되며 이는 정상입니다.
         ```
@@ -369,7 +376,9 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
 
 1. 앞서 모든 노드에서 해야되는 작업을 수행합니다. -> [All node]
 2. worker node hostname을 DNS Resolve 하도록 구성
-    > vi /etc/hosts
+   
+   > vi /etc/hosts
+   
     ```
     <IPv4> <WORKER_NODE_HOSTNAME>
     ```
@@ -391,7 +400,9 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
     ![worker-node](/assets/images/vagrant-k8s-bootstrap/after-worker-join.png)
 
 > 이제 Master 1대와 Worker 1대를 가진 k8s cluster의 Bootstrap을 모두 마쳤습니다.
+
 ## Result
+
 1. 클러스터 상태
     - node 상태
         ![nodes](/assets/images/vagrant-k8s-bootstrap/cluster-status-1.png)
@@ -411,6 +422,7 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
         ![worker-kubelet](/assets/images/vagrant-k8s-bootstrap/worker-kubelet.png)
 
 ## Clean Up
+
 클러스터와 가상머신을 삭제합니다.
 
 1. 클러스터 제거
@@ -440,7 +452,9 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
 
     vagrant destroy # 가상머신 삭제
     ```
+
 ## Ref.
+
 - [Kubernetes Docs](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
 - [Calico Docs](https://projectcalico.docs.tigera.io/getting-started/kubernetes/self-managed-onprem/onpremises)
 - [Vagrant Tutorial by 44bits](https://www.44bits.io/ko/post/vagrant-tutorial)
