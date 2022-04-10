@@ -60,9 +60,9 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
 
 1. Vagrantfile
 
-    > master, worker 각 1대씩 bridge Network 모드로 생성합니다.
+    master, worker 각 1대씩 bridge Network 모드로 생성합니다.
 
-    ```vagrant
+    ```
     vagrant.configure("2") do |config|
     config.vm.define "master" do |master|
         master.vm.box = "generic/centos7"
@@ -85,7 +85,9 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
     end
     end
     ```
+
 2. 노드 생성
+
     ```
     vagrant up
     ```
@@ -232,16 +234,20 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
         exclude=kubelet kubeadm kubectl
         EOF
         ```
-         > ***Error Case) repomd.xml signature 에러**
-         >- repo_gpgcheck=1 로 설정할 경우 아래와 같은 Error를 만날수도 있습니다.
-         > 해당 에러는 centos7의 잘 알려진 에러로서 kubernetes repo config인 /etc/yum.repos.d/kubernetes.repo 에서 repo-gpgcheck=0으로 세팅하여 해결할 수 있습니다. <br>
+         - **Error Case ) repomd.xml signature 에러**
+
+            repo_gpgcheck=1 로 설정할 경우 아래와 같은 Error를 만날수도 있습니다.
+            해당 에러는 centos7의 잘 알려진 에러로서 kubernetes repo config인 /etc/yum.repos.d/kubernetes.repo 에서 repo-gpgcheck=0으로 세팅하여 해결할 수 있습니다.
+
             ```
             failure: repodata/repomd.xml from kubernetes: [Errno 256] No more mirrors to try.
             https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for kubernetes
             ```
     
     2. 패키지 설치 및 kubelet 활성
-        > kubelet 활성 이후 "systemctl status kubelet으로 화인시 status가 failure인 이유는 아직 kubeadm으로 클러스터를 bootstrap 하기 전 이므로 kubelet의 status는 비정상으로 확인되며 이는 정상입니다.
+        
+        kubelet 활성 이후 "systemctl status kubelet으로 화인시 status가 failure인 이유는 아직 kubeadm으로 클러스터를 bootstrap 하기 전 이므로 kubelet의 status는 비정상으로 확인되며 이는 정상입니다.
+        
         ```
         sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
         sudo systemctl enable --now kubelet
@@ -250,11 +256,14 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
 >**[Master Node]**
 
 1. Bootstrap Control Plane
+
     ```
     sudo kubeadm init --apiserver-advertise-address=<ip-address> --pod-network-cidr=<ip-address> --kubernetes-version=<kubernets-version>
     ```
+
     - "--pod-network-cidr" 은 클러스터에 사용될 네트워크 플러그인이 사용합니다. 각 NetworkPlugin마다 주로 사용하는 주소대역이 있지만, 클러스터에서 이미 해당 주소대역을 사용할 경우 다른 주소대역을 사용합니다. (여기서는 calico를 설치할 예정으로 192.168.0.0/16 대역을 사용했습니다.)
         - 현재 pod cidr 확인: 
+
             ```
             kubectl cluster-info dump | grep -m 1 cluster-cidr
             ```
@@ -266,12 +275,14 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
     - "--control-plane-endpoint" 는 master node가 여러대 이고, 앞단에 Proxy를 통한 HA를 구성했을때 사용합니다.
 
     - "--kubernetes-version" 은 쿠버네티스 버전을 특정하여 설치할 경우 사용합니다. 생략할 경우 디폴트 값으로 stable버전의 -1 한 버전이 설치됩니다. 여기서는 1.23.5 버전을 사용했습니다.
-   
-        > 자세한 Option 및 kubeadm init workflow는 아래 링크에서 확인할 수 있습니다.
-        https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/#init-workflow
+    
+    자세한 Option 및 kubeadm init workflow는 아래 링크에서 확인할 수 있습니다.
+    https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/#init-workflow
 
     - 출력
-        > 제 환경에서 생성된 토큰 값을 가리기 위해 값을 TOKEN_VALUE, TOKEN_HASH_VALUE 로 치환해두었습니다.
+        
+        제 환경에서 생성된 토큰 값을 가리기 위해 값을 TOKEN_VALUE, TOKEN_HASH_VALUE 로 치환해두었습니다.
+        
         ```
         Your Kubernetes control-plane has initialized successfully!
 
@@ -301,6 +312,7 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
         kubeadm join 192.168.0.20:6443 --token <TOKEN_VALUE> \
                 --discovery-token-ca-cert-hash <TOKEN_HASH_VALUE> 
         ```
+
 2. kubernetes의 config(kubeconfig)을 사용 설정
 
     kubeadm을 사용하여 클러스터 설치 시 기본적으로 admin.conf가 생성되고 이를 통해 쿠버네티스 api서버와 통신하게 됩니다.
@@ -322,19 +334,25 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
     - [OPTION] kubeconfig 파일을 Host PC 로 복사하여 Host PC에서 클러스터를 관리
         
         vagrant로 가상머신을 생성했기에, vagrant-scp 플러그인을 통해 Master 노드에 있는 kubeconfig을 호스트 머신으로 copy 합니다. vagrant가 아닐경우, 일반적인 scp를 사용해서 파일을 로컬 환경으로 복사 할 수 있습니다.
+        
         - 설치
+        
             ```
             vagrant plugin install vagrant-scp
             ```
+        
         - 파일 복사 (vagrant scp src dest)
+        
             ```
             vagrant scp master:/home/vagrant/.kube/config ~/.kube/
             ```
+    
     - kubectl 정상 동작 확인
         
         kubectl 클라이언트 도구를 사용해 kubeconfig이 정상적으로 세팅되었는지, 그리고 현재 노드의 상태, System Pod의 상태도 확인해 봅니다.
         
         아직 networkplugin이 설치되지 않았으므로 nodessms NotReady 상태로 확인 되며, 또한 coreDNS 도 NetworkPlugin이 없어 Pending으로 확인 됩니다.
+
         ```
         kubectl config current-context
         kubectl config view
@@ -354,15 +372,16 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
     
         kube-system 네임스페이스에서 calico 파드가 정상적으로 Running이 될 경우, coredns pod도 pending에서 running이 되며, node의 상태 또한 Ready상태가 됩니다.
         
-        >after calico installation - pod status
+        - after calico installation - pod status
         
-        ![after-calico-install-pod](/assets/images/vagrant-k8s-bootstrap/after-calico-install-systempodstatus.png)
+            ![after-calico-install-pod](/assets/images/vagrant-k8s-bootstrap/after-calico-install-systempodstatus.png)
             
-        >after calico installation - node status
+        - after calico installation - node status
         
-        ![after-calico-install-node](/assets/images/vagrant-k8s-bootstrap/after-calico-install-nodestatus.png)
+            ![after-calico-install-node](/assets/images/vagrant-k8s-bootstrap/after-calico-install-nodestatus.png)
 
 4. [OPTION] 만약 개발환경에서 노드 1대로 운영하고자 한다면, 마스터노드에 시스템 파드 외에 모든 파드가 스케쥴링 가능하도록 taint를 해주면 됩니다.
+    
     ```
     kubectl taint nodes --all node-role.kubernetes.io/master-
     ```
@@ -377,18 +396,23 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
 1. 앞서 모든 노드에서 해야되는 작업을 수행합니다. -> [All node]
 2. worker node hostname을 DNS Resolve 하도록 구성
    
-   > vi /etc/hosts
+   - vi /etc/hosts
    
-    ```
-    <IPv4> <WORKER_NODE_HOSTNAME>
-    ```
+        ```
+        <IPv4> <WORKER_NODE_HOSTNAME>
+        ```
+
 3. 클러스터 Join
 
     앞서 kubeadm을 통해 마스터노드를 bootstrap 한 후 출력된 값을 사용하여 join 명령을 수행합니다. 해당 명령을 통해 노드가 클러스터의 worker 노드로 등록됩니다.
+    
     ```
     sudo kubeadm join --token <token> <control-plane-host>:<control-plane-port> --discovery-token-ca-cert-hash sha256:<hash>
     ```
+
 - 출력
+    
+    
     ```
     This node has joined the cluster:
     * Certificate signing request was sent to apiserver and a response was received.
@@ -396,8 +420,11 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
 
     Run 'kubectl get nodes' on the control-plane to see this node join the cluster
     ```
+
 - 현재 kubeconfig을 사용할 수 있는 환경(Master 노드 혹은 Host PC, 또는 현재 클러스터의 kubeconfig을 통해 kubectl을 사용할 수 있는 환경)에서 join된 worker 노드를 확인합니다.
+
     ![worker-node](/assets/images/vagrant-k8s-bootstrap/after-worker-join.png)
+
 
 > 이제 Master 1대와 Worker 1대를 가진 k8s cluster의 Bootstrap을 모두 마쳤습니다.
 
@@ -429,24 +456,30 @@ Kubernetes v1.23.5 bootstraping by vagrant and kubeadm
     
     Worker노드 부터 진햅합니다. Worker노드는 3번까지 진행하여 제거하고, Master노드는 1번의 kubeadm reset시 클러스터에서 제거됩니다. root 권한으로 진행합니다. (sudo su -)
     1. node reset
+
         ```
         kubectl drain <node name> --delete-emptydir-data --force --ignore-daemonsets
 
         kubeadm reset
         ```
+    
     2. [OPTION] iptables reset
+    
         ```
         iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X
 
         ipvsadm -C
         ```
+    
     3. worker 노드는 위 내용을 수행한 뒤 아래 커맨드로 노드를 제거합니다.
+    
         ```
         kubectl delete node <node_name>
         ```
 2. 가상머신 제거
     
     Vagrant로 생성한 VBOX 가상머신을 제거합니다.
+    
     ```
     vagrant halt # 가상머신 종료
 
